@@ -267,6 +267,11 @@ class OpenIDConnectClient
     private $token_endpoint_auth_methods_supported = ['client_secret_basic'];
 
     /**
+     * @var string state to be used instead of random string
+     */
+    private $customState;
+
+    /**
      * @param $provider_url string optional
      *
      * @param $client_id string optional
@@ -792,7 +797,7 @@ class OpenIDConnectClient
         $nonce = $this->setNonce($this->generateRandString());
 
         // State essentially acts as a session key for OIDC
-        $state = $this->setState($this->getState() ?: $this->generateRandString());
+        $state = $this->setState($this->getCustomState() ?: $this->generateRandString());
 
         $auth_params = array_merge($this->authParams, [
             'response_type' => $response_type,
@@ -1944,6 +1949,25 @@ class OpenIDConnectClient
      */
     protected function unsetState() {
         $this->unsetSessionKey('openid_connect_state');
+    }
+
+    /**
+     * Set customState
+     *
+     * @param string $state
+     * @return void
+     */
+    public function setCustomState($state) {
+        $this->customState = $state;
+    }
+
+    /**
+     * Get customState
+     *
+     * @return string
+     */
+    public function getCustomState() {
+        return $this->customState;
     }
 
     /**
