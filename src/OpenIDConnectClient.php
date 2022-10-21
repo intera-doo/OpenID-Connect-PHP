@@ -267,9 +267,9 @@ class OpenIDConnectClient
     private $token_endpoint_auth_methods_supported = ['client_secret_basic'];
 
     /**
-     * @var string state to be used instead of random string
+     * @var callable function that returns custom state string
      */
-    private $customState;
+    private $customStateCallback;
 
     /**
      * @param $provider_url string optional
@@ -1952,22 +1952,25 @@ class OpenIDConnectClient
     }
 
     /**
-     * Set customState
+     * Set customStateCallback function which should return string
      *
-     * @param string $state
+     * @param callable $state
      * @return void
      */
-    public function setCustomState($state) {
-        $this->customState = $state;
+    public function setCustomStateCallback(callable $callback) {
+        $this->customStateCallback = $callback;
     }
 
     /**
-     * Get customState
+     * Get customState (call user defined function which returns string)
      *
      * @return string
      */
     public function getCustomState() {
-        return $this->customState;
+        if (is_callable($this->customStateCallback)) {
+            return call_user_func($this->customStateCallback);
+        }
+        return null;
     }
 
     /**
